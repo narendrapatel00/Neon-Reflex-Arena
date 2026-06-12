@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Reflex Arena - Premium 3D Cyberpunk Game</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Immerse yourself in Neon Reflex Arena, a premium 3D cyberpunk reflex clicking challenge. High-octane visuals, synthwave audio, live leaderboards, and achievements.">
+  <meta name="keywords" content="cyberpunk, 3d game, reflex test, click challenge, browser game, threejs, web audio api">
+  <meta name="author" content="Antigravity AI">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Rajdhani:wght@500;700&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Scanline Screen Effect -->
+  <div class="scanlines"></div>
+  <div class="crt-glow"></div>
+
+  <!-- Animated Background Canvas (Particle overlay) -->
+  <canvas id="ambient-particles-canvas"></canvas>
+
+  <!-- ==========================================
+       1. BOOT LOADING SCREEN
+       ========================================== -->
+  <div id="loader-screen" class="loader-container">
+    <div class="loader-content">
+      <div class="glitch-title" data-text="NEON REFLEX ARENA">NEON REFLEX ARENA</div>
+      <div class="hud-line"></div>
+      
+      <div class="boot-terminal" id="boot-terminal">
+        <div class="boot-line">&gt; INITIALIZING NEURAL REFLEX CORE...</div>
+        <div class="boot-line">&gt; CONFIGURING 3D VECTOR MATRIX...</div>
+        <div class="boot-line">&gt; CALIBRATING WebGL PIXEL BUFFERS...</div>
+        <div class="boot-line">&gt; SYNTHESIZING DYNAMIC AUDIO AUDIO STREAMS...</div>
+        <div class="boot-line">&gt; SYSTEM STATUS: HYPERSTABLE [100%]</div>
+      </div>
+      
+      <div class="loader-progress-bar">
+        <div class="loader-progress-fill" id="loader-progress-fill"></div>
+      </div>
+      <div class="loader-status-text">SYNCING SENSORY RECEPTORS: <span id="loader-percent">0%</span></div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       2. USER IDENTITY MODAL
+       ========================================== -->
+  <div id="identity-modal" class="modal-overlay active" style="display: none;">
+    <div class="glass-panel modal-card">
+      <div class="modal-header">
+        <i class="fa-solid fa-id-card neon-text-primary"></i>
+        <h2>NEURAL INTERFACE IDENTIFICATION</h2>
+      </div>
+      <div class="modal-body">
+        <p class="cyber-instruction">Enter your pilot designation code to establish connection with the Reflex Net. Your scores will be recorded globally.</p>
+        <div class="input-glow-wrapper">
+          <input type="text" id="username-input" placeholder="DESIGNATION CODE" maxlength="15" autocomplete="off">
+          <span class="input-border-glow"></span>
+        </div>
+        <div class="identity-error" id="identity-error">DESIGNATION CODE ALREADY RESERVED OR INVALID</div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-identity-btn" class="btn btn-primary btn-glow">
+          <span class="btn-text">ESTABLISH LINK</span>
+          <span class="btn-glow-effect"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       3. NOTIFICATION NOTIFIER
+       ========================================== -->
+  <div id="notification-container" class="notification-container"></div>
+
+  <!-- ==========================================
+       4. GAMEPLAY DASHBOARD
+       ========================================== -->
+  <div id="app-dashboard" class="dashboard-grid" style="opacity: 0; pointer-events: none;">
+    <!-- HEADER -->
+    <header class="dashboard-header glass-panel">
+      <div class="header-brand">
+        <h1 class="logo-text">NEON <span class="neon-text-primary">REFLEX</span> <span class="neon-text-accent">ARENA</span></h1>
+        <div class="status-indicator">
+          <span class="status-pulse-dot"></span>
+          <span class="status-label">LINK STABLE</span>
+        </div>
+      </div>
+      
+      <div class="header-controls">
+        <button id="toggle-music-btn" class="control-btn" title="Toggle Music">
+          <i class="fa-solid fa-music"></i>
+          <span>MUSIC ON</span>
+        </button>
+        <button id="toggle-sfx-btn" class="control-btn" title="Toggle SFX">
+          <i class="fa-solid fa-volume-high"></i>
+          <span>SFX ON</span>
+        </button>
+        <button id="toggle-theme-btn" class="control-btn" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon"></i>
+          <span>DARK</span>
+        </button>
+        <button id="toggle-fullscreen-btn" class="control-btn" title="Toggle Fullscreen">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- LEFT SIDEBAR: PROFILE & ACHIEVEMENTS -->
+    <aside class="sidebar-left">
+      <!-- PLAYER CARD -->
+      <section class="glass-panel profile-card">
+        <div class="card-header-cyber">
+          <h3>PILOT DOSSIER</h3>
+          <span class="cyber-tag">SYS-v1.4</span>
+        </div>
+        <div class="profile-info-container">
+          <div class="avatar-container">
+            <div class="avatar-glow"></div>
+            <div class="avatar-grid"></div>
+            <i class="fa-solid fa-user-astronaut avatar-icon"></i>
+          </div>
+          <div class="profile-stats">
+            <div class="profile-name" id="display-username">PILOT_01</div>
+            <div class="profile-rank" id="display-rank">RECRUIT</div>
+            <div class="profile-highscore-row">
+              <span class="label">PERSONAL BEST:</span>
+              <span class="val neon-text-primary" id="display-highscore">0000</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACHIEVEMENTS -->
+      <section class="glass-panel achievements-card">
+        <div class="card-header-cyber">
+          <h3>ACHIEVEMENTS</h3>
+          <span class="badge-count" id="unlocked-count">0 / 4</span>
+        </div>
+        <div class="achievements-list" id="achievements-list">
+          <div class="achievement-item locked" id="ach-first-hit">
+            <div class="ach-icon"><i class="fa-solid fa-crosshairs"></i></div>
+            <div class="ach-details">
+              <h4>FIRST CONTACT</h4>
+              <p>Hit your first glowing energy orb.</p>
+            </div>
+            <div class="ach-badge"><i class="fa-solid fa-lock"></i></div>
+          </div>
+          <div class="achievement-item locked" id="ach-combo-master">
+            <div class="ach-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="ach-details">
+              <h4>NEURAL FLOW</h4>
+              <p>Achieve a x5 combo multiplier.</p>
+            </div>
+            <div class="ach-badge"><i class="fa-solid fa-lock"></i></div>
+          </div>
+          <div class="achievement-item locked" id="ach-accuracy-king">
+            <div class="ach-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="ach-details">
+              <h4>SNIPER CHROME</h4>
+              <p>Maintain 90%+ accuracy (min 20 hits).</p>
+            </div>
+            <div class="ach-badge"><i class="fa-solid fa-lock"></i></div>
+          </div>
+          <div class="achievement-item locked" id="ach-high-scorer">
+            <div class="ach-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="ach-details">
+              <h4>CYBER GOD</h4>
+              <p>Reach a score of 300+ in a single match.</p>
+            </div>
+            <div class="ach-badge"><i class="fa-solid fa-lock"></i></div>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER PANEL: GAME ARENA -->
+    <main class="arena-center">
+      <!-- HUD HUD HUD -->
+      <div class="hud-top glass-panel">
+        <div class="hud-stat-box" id="hud-score-box">
+          <span class="hud-label">SCORE</span>
+          <span class="hud-value neon-text-primary" id="hud-score">0000</span>
+        </div>
+        <div class="hud-stat-box" id="hud-multiplier-box">
+          <span class="hud-label">MULTIPLIER</span>
+          <span class="hud-value neon-text-secondary" id="hud-multiplier">x1</span>
+          <div class="combo-bar"><div class="combo-bar-fill" id="combo-bar-fill"></div></div>
+        </div>
+        <div class="hud-stat-box" id="hud-time-box">
+          <span class="hud-label">TIME SEC</span>
+          <span class="hud-value neon-text-accent" id="hud-time">60.00</span>
+        </div>
+        <div class="hud-stat-box" id="hud-accuracy-box">
+          <span class="hud-label">ACCURACY</span>
+          <span class="hud-value" id="hud-accuracy">100%</span>
+        </div>
+      </div>
+
+      <!-- THREEJS GAME CONTAINER -->
+      <div id="game-container" class="game-viewport-wrapper">
+        <div id="three-canvas-container"></div>
+        
+        <!-- Screen Shake & Glitch Layer -->
+        <div id="hit-flash-overlay"></div>
+        <div id="miss-flash-overlay"></div>
+        
+        <!-- HUD Canvas Floating Score Popups Container -->
+        <div id="floating-popups-container"></div>
+
+        <!-- START SCREEN OVERLAY -->
+        <div id="start-overlay" class="game-overlay-panel active">
+          <div class="overlay-interior">
+            <div class="glitch-logo">NEON REFLEX</div>
+            <p class="cyber-tagline">3D INTERACTIVE COGNITIVE CHALLENGE</p>
+            <div class="instructions-card glass-panel">
+              <div class="instruction-row">
+                <i class="fa-solid fa-mouse-pointer"></i>
+                <span>CLICK floating glowing 3D energy orbs before they self-destruct.</span>
+              </div>
+              <div class="instruction-row">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <span>CHAIN hits to increase multiplier (x2, x3, x5). Misses reset your combo.</span>
+              </div>
+              <div class="instruction-row">
+                <i class="fa-solid fa-skull"></i>
+                <span>AVOID clicking empty space (-5 pts). The speed and scale adapt to your skill.</span>
+              </div>
+            </div>
+            <button id="start-game-btn" class="btn btn-accent btn-glow">
+              <span class="btn-text">INITIALIZE SYSTEM</span>
+              <span class="btn-glow-effect"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- GAME OVER OVERLAY -->
+        <div id="gameover-overlay" class="game-overlay-panel">
+          <div class="overlay-interior glass-panel">
+            <h2 class="neon-text-accent">LINK DISCONNECTED</h2>
+            <p class="sub-heading">SESSION PERFORMANCE ANALYTICS</p>
+            
+            <div class="final-stats-grid">
+              <div class="final-stat-card">
+                <span class="label">FINAL SCORE</span>
+                <span class="val neon-text-primary" id="final-score">0000</span>
+              </div>
+              <div class="final-stat-card">
+                <span class="label">ACCURACY</span>
+                <span class="val" id="final-accuracy">0%</span>
+              </div>
+              <div class="final-stat-card">
+                <span class="label">ORBS SECURED</span>
+                <span class="val" id="final-hits">0</span>
+              </div>
+              <div class="final-stat-card">
+                <span class="label">PEAK COMBO</span>
+                <span class="val neon-text-secondary" id="final-max-combo">x1</span>
+              </div>
+            </div>
+
+            <div class="action-buttons-row">
+              <button id="post-score-btn" class="btn btn-primary btn-glow">
+                <span class="btn-text">POST TO LEADERBOARD</span>
+              </button>
+              <button id="restart-game-btn" class="btn btn-accent btn-glow">
+                <span class="btn-text">RE-ESTABLISH LINK</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: LIVE STATS & LEADERBOARD -->
+    <aside class="sidebar-right">
+      <!-- LIVE RUN STATS -->
+      <section class="glass-panel run-stats-card">
+        <div class="card-header-cyber">
+          <h3>MATCH TELEMETRY</h3>
+          <span class="blinking-rec">LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="telemetry-item">
+            <span class="label">SUCCESS HITS</span>
+            <span class="value" id="stats-hits">0</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="label">SYSTEM MISSES</span>
+            <span class="value" id="stats-misses">0</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="label">REACTION VEL</span>
+            <span class="value" id="stats-reaction">--- ms</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="label">PEAK MULTIPLIER</span>
+            <span class="value neon-text-secondary" id="stats-peak-combo">x1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section class="glass-panel leaderboard-card">
+        <div class="card-header-cyber">
+          <h3>SECTOR TOP 10</h3>
+          <div class="leaderboard-sync-status">
+            <i class="fa-solid fa-rotate sync-icon" id="sync-icon"></i>
+            <span id="sync-text">SYNCED</span>
+          </div>
+        </div>
+        
+        <div class="leaderboard-list" id="leaderboard-list">
+          <!-- Populated dynamically -->
+          <div class="leaderboard-loading">
+            <div class="cyber-spinner"></div>
+            <span>DOWNLOADING SECTOR SCORES...</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- CDN Script Links -->
+  <!-- Three.js (WebGL 3D graphics) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Confetti Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Project Scripts -->
+  <script src="js/synth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/three-game.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
