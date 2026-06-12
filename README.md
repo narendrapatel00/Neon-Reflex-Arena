@@ -4,9 +4,12 @@
 [![Engine](https://img.shields.io/badge/3D%20Engine-Three.js-00F5FF)](https://threejs.org/)
 [![Audio](https://img.shields.io/badge/Audio-Web%20Audio%20API%20Synth-A855F7)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 [![Status](https://img.shields.io/badge/Build-Stable-10B981)](https://github.com)
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Render-FF0080)](https://neon-reflex-arena.onrender.com/)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/narendrapatel00/Neon-Reflex-Arena)
 
 **Neon Reflex Arena** is a premium, high-octane 3D browser reflex-click game wrapped in an ultra-futuristic cyberpunk gaming dashboard. Renders real-time 3D vector spaces with Three.js, synthesizes dynamic audio patterns using the browser's Web Audio API, and tracks scores on an Express server backend.
+
+Play the live version here: **[https://neon-reflex-arena.onrender.com](https://neon-reflex-arena.onrender.com)**
 
 ---
 
